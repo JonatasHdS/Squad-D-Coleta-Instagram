@@ -86,12 +86,10 @@ def consulta_genero(nome):
 			return genero
 
 		except:
-			print("Nome não encontrado na base!")
 			genero = "None"
 			return genero
 
 	else:
-		print("Conta comercial, impossivel fazer consulta")
 
 
 def importa_dados_genero():
