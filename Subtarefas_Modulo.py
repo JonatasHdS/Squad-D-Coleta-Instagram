@@ -1,5 +1,6 @@
 import re
 from geopy.geocoders import Nominatim
+import pandas as pd
 
 # Função que faz a busca de uma palavra dentro de uma string
 def kmp(t, p):
@@ -58,4 +59,47 @@ def localiza(lat, long):
 	return dados
 
 
+def consulta_genero(nome):
+	"""
+	Consulta o nome no DataFrame para verificar a distribuica de genero para
+	esse nome no Brasil. Retorna uma tupla com o genero mais recorrente e a
+	frequencia desse genero mais recorrente para aquele nome 
+	"""
+	dados = importa_dados_genero();
+	if nome is not None:    
+		try:
+			query = dados.where(dados["first_name"] == nome.upper())
 
+			genero = query["classification"].dropna().to_list()[0]
+
+			# A base de dados possui uma coluna "ratio" com a frequencia do genero para
+			# determinado nome. Porem os resultados nao estao normalizados e parecem
+			# caoticos. Portanto, vamos usar outros dados da base para determinar isso
+			if genero == "F":
+				frequencia_genero = int(query["frequency_female"].dropna().to_list()[0])
+			elif genero == "M":
+				frequencia_genero = int(query["frequency_male"].dropna().to_list()[0])
+
+			frequencia_total = int(query["frequency_total"].dropna().to_list()[0])
+			frequencia = frequencia_genero / frequencia_total
+
+			return genero
+
+		except:
+			print("Nome não encontrado na base!")
+			genero = "None"
+			return genero
+
+	else:
+		print("Conta comercial, impossivel fazer consulta")
+
+
+def importa_dados_genero():
+	"""
+	Importa para um DataFrame a base de dados do CENSO 2010 com a distribuicao
+	de genero para cada nome. O dataset consolidado foi encontrado no site do
+	Brasil.io (https://brasil.io/dataset/genero-nomes/nomes/). Retorna esse DF
+	"""
+	dados = pd.read_csv("nomes.csv")
+
+	return dados
