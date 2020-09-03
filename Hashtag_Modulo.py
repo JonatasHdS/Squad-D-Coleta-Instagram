@@ -8,7 +8,7 @@ def criar_data(periodo):
 
 # Função que avalia se o coronavirus está relacionado ao post
 def comentario_relacionado(comments):
-	corona_list = ["coron", "covid", "quarentena", "homeoffice", "pandemia"]
+	corona_list = ["coron", "covid", "quarent", "homeoffice", "pand", "virus"]
 	for comment in comments:
 		for x in corona_list:
 			string = comment.text.replace(" ", "")
@@ -18,7 +18,7 @@ def comentario_relacionado(comments):
 
 # Função que busca se o texto do post analisado contém alguma das palavras-chaves relacionadas ao covid
 def texto_relacionado(caption):
-	corona_list = ["covid", "corona", "doença", "quarentena", "coronga", "virus", "pandemia"]
+	corona_list = ["coron", "covid", "quarent", "homeoffice", "pand", "virus"]
 	for x in corona_list:
 		string = caption.replace(" ", "")
 		if Subtarefas_Modulo.kmp(string,x) != []:
@@ -78,8 +78,12 @@ def coleta_hashtag(loader):
 				print(post.date)
 				cont += 1
 				comentarios = post.get_comments()
-				nome = post.owner_profile.full_name.split()
-				genero = Subtarefas_Modulo.consulta_genero(nome[0])
+				nome = post.owner_profile.full_name
+				if nome:
+					nome = nome.split()
+					genero = Subtarefas_Modulo.consulta_genero(nome[0])
+				else:
+					genero = "None"
 				if post.location == None or post.location.lat == None or post.location.lng == None:
 					writer.writerow([post.owner_username, genero, post.date, post.likes, post.comments,emoji_pattern.sub(r'', post.caption), post.caption_hashtags, post.is_sponsored, post.tagged_users, comentario_relacionado(comentarios), texto_relacionado(post.caption), "None", "None", "None", "None"]) #Coleta os dados referentes as colunas do arquivo csv
 				else:
