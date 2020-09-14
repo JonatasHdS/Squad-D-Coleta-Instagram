@@ -72,23 +72,20 @@ def coleta_perfil(loader):
             posts = profile.get_posts()
             with open(str(profile.username)+'.csv', 'w', encoding='utf-8', newline='') as file:
                 writer = csv.writer(file)
-                writer.writerow(["Usuario", "Genero", "Data", "Likes", "Comentarios", "Texto", "Hashtags", "Patrocinado", "Usuarios marcados", "Comentário Rel.", "Texto Rel.", "Estado", "Cidade", "Metropolitano", "Região"])
+                writer.writerow(["Usuario", "Genero", "Data", "Likes", "Comentarios", "Texto", "Hashtags", "Patrocinado", "Usuarios marcados", "Comentário Rel.", "Texto Rel.", "PostId"])
                 for post in posts:
                     comentarios = post.get_comments()
                     if post.is_video == False and post.caption != None and emprego_relacionado(comentarios, post.caption):
                         print(post.date)
                         cont += 1
+                        print("Número de posts coletados: ", cont)
                         nome = post.owner_profile.full_name
                         if nome:
                             nome = nome.split()
                             genero = Subtarefas_Modulo.consulta_genero(nome[0])
                         else:
                             genero = "None"
-                        if post.location == None or post.location.lat == None or post.location.lng == None:
-                            writer.writerow([post.owner_username, genero, post.date, post.likes, post.comments,emoji_pattern.sub(r'', post.caption), post.caption_hashtags, post.is_sponsored, post.tagged_users, comentario_relacionado(comentarios), texto_relacionado(post.caption), "None", "None", "None", "None"]) #Coleta os dados referentes as colunas do arquivo csv
-                        else:
-                            local = Subtarefas_Modulo.localiza(post.location.lat, post.location.lng)
-                            writer.writerow([post.owner_username, genero, post.date, post.likes, post.comments,emoji_pattern.sub(r'', post.caption), post.caption_hashtags, post.is_sponsored, post.tagged_users, comentario_relacionado(comentarios), texto_relacionado(post.caption), local[0], local[1], local[2], local[3]]) #Coleta os dados referentes as colunas do arquivo csv
+                        writer.writerow([post.owner_username, genero, post.date, post.likes, post.comments,emoji_pattern.sub(r'', post.caption), post.caption_hashtags, post.is_sponsored, post.tagged_users, comentario_relacionado(comentarios), texto_relacionado(post.caption), post.shortcode]) #Coleta os dados referentes as colunas do arquivo csv
                     if cont == cont_max: #Caso o número necessário de posts seja coletado ou não exista mais posts nessa margem de tempo, finaliza o programa
                         print("Finalizado!!")
                         break
