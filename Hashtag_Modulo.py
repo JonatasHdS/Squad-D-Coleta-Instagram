@@ -3,8 +3,12 @@ import Subtarefas_Modulo
 
 # Função que cria a data 
 def criar_data(periodo):
-	a,m,d = input("Digite uma data para ser o"+periodo+"da pesquisa(aaaa-mm-dd): ").split("-")
-	return datetime.datetime(int(a),int(m),int(d))   
+	if periodo == ' final ':
+		a,m,d = input("Digite uma data para ser o"+periodo+"da pesquisa(aaaa-mm-dd): ").split("-")
+		return datetime.datetime(int(a),int(m),int(d))   
+	else:
+		a,m,d,h,min = input("Digite uma data para ser o"+periodo+"da pesquisa(aaaa-mm-dd-hr-min): ").split("-")
+		return datetime.datetime(int(a),int(m),int(d),int(h),int(min),0)
 
 # Função que avalia se o coronavirus está relacionado ao post
 def comentario_relacionado(comments):
